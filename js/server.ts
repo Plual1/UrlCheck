@@ -1,32 +1,34 @@
 import type { UrlResponse } from "./UrlResponseModel.js";
 
+const LATENCY_MS = 250;
+const SLOW_LATENCY_MS = 2500;
+
 /**
  * Mock of a server that checks if a given URL exists and if a file or directory is returned.
- * Configured to take a pseudorandom amount of time to complete ( 0-1000 ms).
+ * Returns a directory when url ends with "/". 
+ * Returns "doesnt exist" on url ending with "404"
  * 
- * @param url URL to 
+ * The mock will take SLOW_LATENCY_MS ms if the url contains "slow"
+ *
+ * @param url URL to check
  * @returns UrlResponse
  */
 export async function checkExists(url: URL): Promise<UrlResponse> {
     return new Promise((resolve, reject) => {
 
+        const marker = url.href.toLowerCase();
+
         setTimeout(() => {
             try {
-                const typeId = Math.random();
-                let type;
-                let exists=true;
-                if (typeId > 0.5) {
-                    type = "Directory";
-                    exists = false;
-                } else {
-                    type = "File";
-                }
-                const response: UrlResponse = { exists, type: type };
+                const exists = !url.href.endsWith("404");
+                const isDirectory = url.href.endsWith("/");
+
+                const response: UrlResponse = { exists, type: isDirectory ? "directory" : "file" };
                 resolve(response);
             } catch (error) {
                 reject(error);
             }
-        }, Math.random() * 1000
+        }, marker.includes("slow") ? SLOW_LATENCY_MS : LATENCY_MS
         )
 
     }

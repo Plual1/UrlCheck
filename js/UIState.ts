@@ -1,7 +1,8 @@
-import type { UrlResponse } from "./UrlResponseModel";
+import type { UrlResponse } from "./UrlResponseModel.js";
 
-export interface UIState {
-    urlResponse: UrlResponse | null,
-    error: boolean,
-    loading: boolean
-}
+export type UIState =
+    | { status: "idle" }
+    | { status: "invalid" }
+    | { status: "checking" }
+    | { status: "checked"; href: string; response: UrlResponse }
+    | { status: "failed" };

@@ -1,4 +1,4 @@
-export interface UrlResponse{
+export interface UrlResponse {
     exists: boolean,
-    type: string 
+    type: "file" | "directory"
 }
